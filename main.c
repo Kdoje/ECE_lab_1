@@ -59,6 +59,7 @@ int main(void) {
 				player_hand[i]=deck[next_card];
 				next_card++;
 			}
+			//this is the starting hand size
 			for(int i=0; i<2; i++){
 				cpu_hand[i]=deck[next_card];
 				next_card++;
@@ -68,6 +69,7 @@ int main(void) {
 		case enter_bet:{
 			char bool_valid_bet=0;
 			disp_player_hand(player_hand, HAND_LENGTH);
+			disp_cpu_hand(cpu_hand, HAND_LENGTH);
 			disp_enter_bet();
 			while(!bool_valid_bet){
 				//sets the player bet
@@ -85,7 +87,7 @@ int main(void) {
 			break;
 		}
 		case play:{
-
+				//print
 			break;
 		}
 		}

@@ -12,6 +12,7 @@ void disp_cut_req();
 void disp_invalid_input();
 int get_keypad_input();
 void disp_enter_bet();
-void display_hand();
+void display_hand(char hand_length, char* p_hand);
 void disp_player_hand(char *p_hand, char hand_length);
+void disp_cpu_hand(char *p_hand, char hand_length);
 #endif /* IO_H_ */

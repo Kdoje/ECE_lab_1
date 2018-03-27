@@ -73,3 +73,14 @@ void disp_player_hand(char *p_hand, char hand_length) {
 	diplay_hand(hand_length, p_hand);
 	printf("\n");
 }
+
+void disp_cpu_hand(char *p_hand, char hand_length){
+	//need cast to print first card only
+	diplay_hand((char) 1, p_hand);
+	for(int i=1; i<hand_length; i++){
+		if(p_hand[i]!=CARD_NULL){
+			printf("XX-XX ");
+		}
+	}
+	printf("\n");
+}
