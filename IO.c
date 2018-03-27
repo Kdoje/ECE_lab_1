@@ -95,6 +95,9 @@ void disp_cpu_matched(char bool_matched){
 		printf("The cpu has matched your bet\n");
 	}
 	else{
-		printf("The cpu has folded");
+		printf("The cpu has folded\n");
 	}
+}
+void disp_totals(int player_winnings, int cpu_winnings){
+	printf("Player has%d$\nCPU has %d$\n",player_winnings, cpu_winnings);
 }

@@ -65,7 +65,7 @@ int main(void) {
 				next_card++;
 			}
 			break;
-		}//
+		}
 		case enter_bet:{
 			char bool_valid_bet=0;
 			disp_player_hand(player_hand, HAND_LENGTH);
@@ -130,6 +130,7 @@ int main(void) {
 						match_chosen=1;
 						cpu_winnings+=player_bet;
 						player_winnings-=player_bet;
+						disp_totals(player_winnings, cpu_winnings);
 						game_state=deal;
 					}
 				}
@@ -147,7 +148,7 @@ int main(void) {
 					player_winnings+=cpu_bet;
 					//the cpu declines
 					disp_cpu_matched((char)0);
-
+					disp_totals(player_winnings, cpu_winnings);
 				}
 				else{
 					//the cpu accepts
