@@ -40,5 +40,5 @@ face get_face(int card){
 }
 
 int get_val(int card){
-	return(card+1)%13;
+	return card%13;
 }

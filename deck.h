@@ -15,6 +15,7 @@ enum state{
 	start,
 	deal,
 	enter_bet,
+	match_bet,
 	play,
 };
 typedef enum face face;

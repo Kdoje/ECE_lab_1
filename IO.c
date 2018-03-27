@@ -73,14 +73,28 @@ void disp_player_hand(char *p_hand, char hand_length) {
 	diplay_hand(hand_length, p_hand);
 	printf("\n");
 }
-
+void disp_bets(unsigned int player_bet, unsigned int cpu_bet){
+	printf("CPU bet: %d\nPlayer bet: %d ", cpu_bet, player_bet);
+}
 void disp_cpu_hand(char *p_hand, char hand_length){
 	//need cast to print first card only
-	diplay_hand((char) 1, p_hand);
-	for(int i=1; i<hand_length; i++){
+	char start_card=2;
+	diplay_hand((char) start_card, p_hand);
+	for(int i=(int) start_card; i<hand_length; i++){
 		if(p_hand[i]!=CARD_NULL){
 			printf("XX-XX ");
 		}
 	}
 	printf("\n");
+}
+void disp_req_match(){
+	printf("Please enter 1 to match, 0 to fold\n");
+}
+void disp_cpu_matched(char bool_matched){
+	if(bool_matched){
+		printf("The cpu has matched your bet\n");
+	}
+	else{
+		printf("The cpu has folded");
+	}
 }
