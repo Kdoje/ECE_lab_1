@@ -65,7 +65,7 @@ int main(void) {
 				next_card++;
 			}
 			break;
-		}
+		}//
 		case enter_bet:{
 			char bool_valid_bet=0;
 			disp_player_hand(player_hand, HAND_LENGTH);
