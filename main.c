@@ -147,6 +147,7 @@ int main(void) {
 					player_winnings+=cpu_bet;
 					//the cpu declines
 					disp_cpu_matched((char)0);
+
 				}
 				else{
 					//the cpu accepts
