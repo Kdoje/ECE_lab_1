@@ -35,9 +35,6 @@ void shuffle_deck(int cut) {
 		}
 	}
 }
-void disp_hands(){
-
-}
 face get_face(int card){
 	return card/13;
 }

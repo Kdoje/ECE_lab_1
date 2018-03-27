@@ -50,6 +50,7 @@ int main(void) {
 					disp_invalid_input();
 				}
 			}
+			//deal the cards
 			for(int i=0; i<HAND_LENGTH; i++){
 				player_hand[i]=CARD_NULL;
 				cpu_hand[i]=CARD_NULL;
@@ -66,7 +67,7 @@ int main(void) {
 		}
 		case enter_bet:{
 			char bool_valid_bet=0;
-			disp_hands();
+			disp_player_hand(player_hand, HAND_LENGTH);
 			disp_enter_bet();
 			while(!bool_valid_bet){
 				//sets the player bet

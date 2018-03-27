@@ -6,6 +6,7 @@
  */
 #include <stdio.h>
 #include "IO.h"
+#include "deck.h"
 
 //replace this with a text display thing
 void disp_opening(){
@@ -29,4 +30,46 @@ void disp_enter_bet(){
 	printf("please enter a bet of 1, 2, 4, 8\n");
 }
 
+void diplay_hand(char hand_length, char* p_hand) {
+	for (int i = 0; i < hand_length; i++) {
+		//makes sure only real cards are printed
+		if (p_hand[i] != CARD_NULL) {
+			//this will take 0-12 and make it a 0
+			switch (p_hand[i] / 13) {
+			case heart: {
+				printf("H");
+				break;
+			}
+			case club: {
+				printf("C");
+				break;
+			}
+			case spade: {
+				printf("S");
+				break;
+			}
+			case diamond: {
+				printf("D");
+				break;
+			}
+			}
+			//prints the suit number with 0-8 being nos.
+			if (p_hand[i] % 13 <= 8) {
+				printf("-%d ", p_hand[i] % 13 + 2);
+			} else if (p_hand[i] % 13 == 9) {
+				printf("-J ");
+			} else if (p_hand[i] % 13 == 10) {
+				printf("-Q ");
+			} else if (p_hand[i] % 13 == 11) {
+				printf("-K ");
+			} else if (p_hand[i] % 13 == 12) {
+				printf("-A ");
+			}
+		}
+	}
+}
 
+void disp_player_hand(char *p_hand, char hand_length) {
+	diplay_hand(hand_length, p_hand);
+	printf("\n");
+}
