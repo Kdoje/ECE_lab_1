@@ -63,8 +63,8 @@ void disp_cut_req(){
 	Graphics_flushBuffer(&g_sContext);
 }
 void disp_invalid_input(){
-	Graphics_drawStringCentered(&g_sContext, "Please enter a", AUTO_STRING_LENGTH, 48, 55, TRANSPARENT_TEXT);
-	Graphics_drawStringCentered(&g_sContext, "valid number", AUTO_STRING_LENGTH, 48, 65, TRANSPARENT_TEXT);
+	Graphics_drawStringCentered(&g_sContext, "Please enter a", AUTO_STRING_LENGTH, 48, 75, TRANSPARENT_TEXT);
+	Graphics_drawStringCentered(&g_sContext, "valid number", AUTO_STRING_LENGTH, 48, 85, TRANSPARENT_TEXT);
 	Graphics_flushBuffer(&g_sContext);
 	//swDelay(1);
 	//Graphics_drawStringCentered(&g_sContext, "                           ", AUTO_STRING_LENGTH, 48, 15, TRANSPARENT_TEXT); //clear display
@@ -86,13 +86,25 @@ void store_keypad_input(char input){
 }
 int get_keypad_input(){
     int i;
-    int multiplier=1;
+    int multiplier=100;
     int result =0;
+    //count the non-zero entries to init the multiplier
     for(i=0; i<buffer_length; i++){
-        if(input_buffer[i]!=0){//makes sure the char isn't null
-            result += (input_buffer[i]-CHAR_TO_INT)*multiplier;
-            multiplier*=10;
+        if(input_buffer[i]==0){//makes sure the char isn't null
+            multiplier/=10;//store the result in multiplier
         }
+    }
+    if(input_buffer[0]!=0){
+        result+=(input_buffer[0]-CHAR_TO_INT)*multiplier;
+        multiplier/=10;
+    }
+    if(input_buffer[1]!=0){
+        result+=(input_buffer[1]-CHAR_TO_INT)*multiplier;
+        multiplier/=10;
+    }
+    if(input_buffer[2]!=0){
+        result+=(input_buffer[2]-CHAR_TO_INT)*multiplier;
+        multiplier/=10;
     }
     return result;
 }
@@ -128,56 +140,72 @@ unsigned char *get_keypad_string_input(){
     return result;
 }
 void disp_enter_bet(){
-	Graphics_drawStringCentered(&g_sContext, "Please enter a bet of 1, 2, 4, 8", AUTO_STRING_LENGTH, 48, 15, TRANSPARENT_TEXT);
+	Graphics_drawStringCentered(&g_sContext, "Please enter a", AUTO_STRING_LENGTH, 48, 15, TRANSPARENT_TEXT);
+	Graphics_drawStringCentered(&g_sContext, "bet: 1, 2, 4, 8", AUTO_STRING_LENGTH, 48, 25, TRANSPARENT_TEXT);
 	Graphics_flushBuffer(&g_sContext);
 }
 
-void diplay_hand(char hand_length, char* p_hand) {
+void diplay_hand(char hand_length, char* p_hand, int pos) {
     //fix so cards get printed, then the position moves
-	unsigned char card[2];
+    const unsigned char size=14;
+	unsigned char card[size]; //able to print 5 cards
 	int i;
-	for (i = 0; i < hand_length; i++) {
+	for(i=0; i<size; i++){
+	    card[i]=0;
+	}
+	//this requires that pos be passed in based on these values
+	if(pos==35){
+	    card[0]='P';
+	}
+	else{
+	    card[0]='C';
+	}
+	card[1]=':';
+	for (i = 2; i < size; i+=3) {
 		//makes sure only real cards are printed
-		if (p_hand[i] != CARD_NULL) {
+		if (p_hand[i/3] != CARD_NULL) {
 			//this will take 0-12 and make it a 0
-			switch (p_hand[i] / 13) {
+			switch (p_hand[i/3] / 13) {
 			case heart: {
-				card[0] = 'H';
+				card[i+1] = 'H';
 				break;
 			}
 			case club: {
-				card[0] = 'C';
+				card[i+1] = 'C';
 				break;
 			}
 			case spade: {
-				card[0] = 'S';
+				card[i+1] = 'S';
 				break;
 			}
 			case diamond: {
-				card[0] = 'D';
+				card[i+1] = 'D';
 				break;
 			}
 			}
 			//prints the suit number with 0-8 being nos.
-			if (p_hand[i] % 13 <= 8) {
-				card[1] = (p_hand[i] % 13 + 2)+0x30;
-			} else if (p_hand[i] % 13 == 9) {
-				card[1] = 'J';
-			} else if (p_hand[i] % 13 == 10) {
-				card[1] = 'Q';
-			} else if (p_hand[i] % 13 == 11) {
-				card[1] = 'K';
-			} else if (p_hand[i] % 13 == 12) {
-				card[1] = 'A';
+			if (p_hand[i/3] % 13 <= 7) {
+				card[i] = (p_hand[i/3] % 13 + 2)+0x30;
+			} else if(p_hand[i/3]%13==8){
+			    card[i]='0';
+			}else if (p_hand[i/3] % 13 == 9) {
+				card[i] = 'J';
+			} else if (p_hand[i/3] % 13 == 10) {
+				card[i] = 'Q';
+			} else if (p_hand[i/3] % 13 == 11) {
+				card[i] = 'K';
+			} else if (p_hand[i/3] % 13 == 12) {
+				card[i] = 'A';
 			}
+			card[i+2]='|';
 		}
 	}
-	Graphics_drawStringCentered(&g_sContext, card, 4, 20, 25, TRANSPARENT_TEXT);
+	Graphics_drawString(&g_sContext, card, size, 20, pos, OPAQUE_TEXT);
 	Graphics_flushBuffer(&g_sContext);
 }
 
 void disp_player_hand(char *p_hand, char hand_length) {
-	diplay_hand(hand_length, p_hand);
+	diplay_hand(hand_length, p_hand, 35);
 }
 void disp_bets(unsigned int player_bet, unsigned int cpu_bet){
 	Graphics_drawStringCentered(&g_sContext, "CPU:", AUTO_STRING_LENGTH, 48, 45, TRANSPARENT_TEXT);
@@ -193,11 +221,11 @@ void disp_bets(unsigned int player_bet, unsigned int cpu_bet){
 void disp_cpu_hand(char *p_hand, char hand_length){
 	//need cast to print first card only
 	char start_card=2;
-	diplay_hand((char) start_card, p_hand);
+	diplay_hand((char) start_card, p_hand, 45);
 	int i;
 	for(i=(int) start_card; i<hand_length; i++){
 		if(p_hand[i]!=CARD_NULL){
-			Graphics_drawStringCentered(&g_sContext, "XXX", 4, 20, 55, TRANSPARENT_TEXT);
+			Graphics_drawStringCentered(&g_sContext, "XXX", AUTO_STRING_LENGTH, 20, 45, OPAQUE_TEXT);
 			Graphics_flushBuffer(&g_sContext);
 		}
 	}

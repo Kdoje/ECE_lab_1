@@ -188,12 +188,12 @@ int main(void) {
 					unsigned char match = get_keypad_input();
 					//replace this with the bit1 stuff
 					if (match==1) {
-						printf("match confirmed\n");
+						//printf("match confirmed\n");
 						match_chosen = 1;
 						game_state++;
 					}
 					else if(match==0){
-						printf("match declined\n");
+						//printf("match declined\n");
 						match_chosen=1;
 						cpu_winnings+=player_bet;
 						player_winnings-=player_bet;

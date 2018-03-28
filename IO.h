@@ -16,7 +16,7 @@ int get_keypad_input(); //this returns the string as an int
 void print_keypad_string_input();
 unsigned char *get_keypad_string_input();
 void disp_enter_bet();
-void display_hand(char hand_length, char* p_hand);
+void display_hand(char hand_length, char* p_hand, int pos);
 void disp_bets(unsigned int player_bet, unsigned int cpu_bet);
 void disp_req_match();
 void disp_cpu_matched(char bool_matched);
