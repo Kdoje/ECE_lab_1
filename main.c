@@ -12,69 +12,91 @@
 #include "IO.h"
 #include "peripherals.h"
 
-state game_state = start;
-int main(void) {
-    //dont forget to disable the watch dog, start the display, then flush it
-    WDTCTL = WDTPW | WDTHOLD;
 
+state game_state = start;
+
+int main(void) {
+    bool refreshed=false;
 	unsigned int player_bet=0;
 	unsigned int cpu_bet=0;
+	unsigned char cur_key=0;
 	int player_winnings=0;
 	int cpu_winnings=0;
 	extern char player_hand[9];
-    extern char cpu_hand[9];
-    unsigned int next_card = 0;
+	extern char cpu_hand[9];
+	unsigned int next_card=0;
+    WDTCTL = WDTPW | WDTHOLD;
 
     initLeds();
 
     configDisplay();
     configKeypad();
-
-    // *** Intro Screen ***
     Graphics_clearDisplay(&g_sContext); // Clear the display
 
-    // Write some text to the display
-    Graphics_drawStringCentered(&g_sContext, "Sup Kent", AUTO_STRING_LENGTH,
-                                48, 15, TRANSPARENT_TEXT);
-    Graphics_drawStringCentered(&g_sContext, "to", AUTO_STRING_LENGTH, 48, 25,
-                                TRANSPARENT_TEXT);
-    Graphics_drawStringCentered(&g_sContext, "ECE204-C18!", AUTO_STRING_LENGTH,
-                                48, 35, TRANSPARENT_TEXT);
+      // Write some text to the display
+      Graphics_drawStringCentered(&g_sContext, "Sup boii", AUTO_STRING_LENGTH,
+                                  48, 15, TRANSPARENT_TEXT);
+      Graphics_drawStringCentered(&g_sContext, "to", AUTO_STRING_LENGTH, 48, 25,
+                                  TRANSPARENT_TEXT);
+      Graphics_drawStringCentered(&g_sContext, "ECE204-C18!", AUTO_STRING_LENGTH,
+                                  48, 35, TRANSPARENT_TEXT);
 
-    // Draw a box around everything because it looks nice
-    Graphics_Rectangle box = { .xMin = 5, .xMax = 91, .yMin = 5, .yMax = 91 };
-    Graphics_drawRectangle(&g_sContext, &box);
-    Graphics_flushBuffer(&g_sContext);
-	 while (1) {
+      // Draw a box around everything because it looks nice
+      Graphics_Rectangle box = { .xMin = 5, .xMax = 91, .yMin = 5, .yMax = 91 };
+      Graphics_drawRectangle(&g_sContext, &box);
+      Graphics_flushBuffer(&g_sContext);
+	while (1) {
 		switch (game_state) {
 		case start:{
-			disp_opening();
+		    if(!refreshed){
+		        disp_opening();
+		        refreshed=true;
+		    }
 			//replace with input stuff
-			if (getchar() == '*') {
+			if (getKey()== '*') {
+			    refreshed=false;
+			    Graphics_clearDisplay(&g_sContext);
 				game_state++;
+				clear_keypad_buffer();//sets up buffer for next stage
 			}
 			break;
 		}
 		case deal:{
-			disp_cut_req();
+		    if(!refreshed){
+		        disp_cut_req();
+		        refreshed=true;
+		    }
 			int cut_val;
-			char bool_valid = 0;
-			while (!bool_valid) {
+			bool valid = false;
+			while (!valid) {
 				//gets the cut val into a var
-				cut_val=get_keypad_input();
-				//validate
-				if (cut_val!=-1) {
-					if (cut_val >= 1 && cut_val <= 15) {
-						bool_valid = 1;
-						shuffle_deck(cut_val);
-						game_state++;
-					}
-					else{
-						disp_invalid_input();
-					}
-				} else {
-					disp_invalid_input();
+			    cur_key =getKey();
+				//converts to int;
+				if((cur_key >= '0') && (cur_key <= '9')){
+				   store_keypad_input(cur_key);
+				   //TODO fix the integer not printing
+				   Graphics_drawStringCentered(&g_sContext, get_keypad_string_input(), 3,
+				                                   48, 45, TRANSPARENT_TEXT);
+				   Graphics_flushBuffer(&g_sContext);
 				}
+				//validate
+                if (cur_key == '*')
+                {
+                    cut_val = get_keypad_input();
+                    if (cut_val >= 1 && cut_val <= 15)
+                    {
+                        valid = true;
+                        shuffle_deck(cut_val);
+                    }
+                    else
+                    {
+                        disp_invalid_input();
+                    }
+                    clear_keypad_buffer();
+                    Graphics_drawStringCentered(&g_sContext, "     ",
+                                                AUTO_STRING_LENGTH, 48, 35,
+                                                TRANSPARENT_TEXT);
+                }
 			}
 			//deal the cards
 			int i;
@@ -91,6 +113,7 @@ int main(void) {
 				cpu_hand[i]=deck[next_card];
 				next_card++;
 			}
+			game_state++;
 			break;
 		}
 		case enter_bet:{
@@ -146,7 +169,7 @@ int main(void) {
 				disp_req_match();
 				while (!match_chosen) {
 					//sets the player bet
-					char match = get_keypad_input();
+					unsigned char match = get_keypad_input();
 					//replace this with the bit1 stuff
 					if (match==1) {
 						printf("match confirmed\n");

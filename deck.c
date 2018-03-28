@@ -13,7 +13,7 @@ void shuffle_deck(int cut) {
 	const int DECK_LENGTH = 52;
 	extern char deck[52];
 	srand(time(0) + cut);
-	volatile int i;
+	int i;
 	for (i = 0; i < DECK_LENGTH; i++) {
 		deck[i] = i;
 		//printf("%3d ", deck[i]);
