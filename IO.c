@@ -9,7 +9,7 @@
 #include "deck.h"
 #include "peripherals.h"
 
-char input_buffer[]={0, 0, 0};
+unsigned char input_buffer[]={0, 0, 0};
 extern const unsigned char buffer_length=3;
 const unsigned int CHAR_TO_INT=0x30;
 unsigned char buffer_pointer=0;
@@ -88,13 +88,29 @@ int get_keypad_input(){
     int i;
     int multiplier=1;
     int result =0;
-    for(i=buffer_length; i>0; i--){
+    for(i=0; i<buffer_length; i++){
         if(input_buffer[i]!=0){//makes sure the char isn't null
             result += (input_buffer[i]-CHAR_TO_INT)*multiplier;
             multiplier*=10;
         }
     }
     return result;
+}
+void print_keypad_string_input(){
+    unsigned char result[]={' ', ' ', ' '};
+       if(input_buffer[0]!=0){
+           result[2]=input_buffer[0];
+       }
+       if (input_buffer[1] != 0)
+       {
+           result[1] = input_buffer[1];
+       }
+       if (input_buffer[2] != 0)
+       {
+           result[0] = input_buffer[2];
+       }
+    Graphics_drawStringCentered(&g_sContext, input_buffer, 3, 48, 45, OPAQUE_TEXT);
+    Graphics_flushBuffer(&g_sContext);
 }
 unsigned char *get_keypad_string_input(){
     unsigned char result[]={' ', ' ', ' '};
@@ -117,7 +133,8 @@ void disp_enter_bet(){
 }
 
 void diplay_hand(char hand_length, char* p_hand) {
-	char card[2];
+    //fix so cards get printed, then the position moves
+	unsigned char card[2];
 	int i;
 	for (i = 0; i < hand_length; i++) {
 		//makes sure only real cards are printed
@@ -143,7 +160,7 @@ void diplay_hand(char hand_length, char* p_hand) {
 			}
 			//prints the suit number with 0-8 being nos.
 			if (p_hand[i] % 13 <= 8) {
-				card[1] = p_hand[i] % 13 + 2;
+				card[1] = (p_hand[i] % 13 + 2)+0x30;
 			} else if (p_hand[i] % 13 == 9) {
 				card[1] = 'J';
 			} else if (p_hand[i] % 13 == 10) {

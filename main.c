@@ -74,28 +74,32 @@ int main(void) {
 				//converts to int;
 				if((cur_key >= '0') && (cur_key <= '9')){
 				   store_keypad_input(cur_key);
+				   swDelay(1);
 				   //TODO fix the integer not printing
-				   Graphics_drawStringCentered(&g_sContext, get_keypad_string_input(), 3,
-				                                   48, 45, TRANSPARENT_TEXT);
-				   Graphics_flushBuffer(&g_sContext);
+				   print_keypad_string_input();
+
 				}
 				//validate
                 if (cur_key == '*')
                 {
                     cut_val = get_keypad_input();
-                    if (cut_val >= 1 && cut_val <= 15)
+                    if (cut_val >= 0 && cut_val <= 15)
                     {
                         valid = true;
                         shuffle_deck(cut_val);
+                        Graphics_clearDisplay(&g_sContext);
+                        Graphics_flushBuffer(&g_sContext);
                     }
                     else
                     {
                         disp_invalid_input();
+                        Graphics_flushBuffer(&g_sContext);
                     }
                     clear_keypad_buffer();
                     Graphics_drawStringCentered(&g_sContext, "     ",
-                                                AUTO_STRING_LENGTH, 48, 35,
-                                                TRANSPARENT_TEXT);
+                                                AUTO_STRING_LENGTH, 48, 45,
+                                                OPAQUE_TEXT);
+                    Graphics_flushBuffer(&g_sContext);
                 }
 			}
 			//deal the cards
@@ -117,52 +121,64 @@ int main(void) {
 			break;
 		}
 		case enter_bet:{
-			char bool_valid_bet=0;
-			disp_player_hand(player_hand, HAND_LENGTH);
-			disp_cpu_hand(cpu_hand, HAND_LENGTH);
-			disp_enter_bet();
-			while(!bool_valid_bet){
-				//sets the player bet
-				player_bet=get_keypad_input();
-				//replace this with the bit1 stuff
-				if(player_bet==1||player_bet==2||player_bet==4||player_bet==8){
-					//printf("%d",player_bet);
-					bool_valid_bet=1;
-					game_state++;
-				}
-				else{
-					disp_invalid_input();
-				}
-				char cpu_card_val=0;
-				int i;
-				for(i=0; i<HAND_LENGTH; i++){
-					if(cpu_hand[i]!=CARD_NULL){
-						cpu_card_val+=get_val(cpu_hand[i]);
-					}
-				}
-				//set up the cpu_bet
-				if(cpu_card_val<3){
-					cpu_bet=1;
-				}
-				else if(cpu_card_val<9){
-					cpu_bet=2;
-				}
-				else if(cpu_card_val<16){
-					cpu_bet=4;
-				}
-				else{
-					cpu_bet=8;
-				}
-			}
-			disp_bets(player_bet, cpu_bet);
-			if(player_bet!=cpu_bet){
-				game_state=match_bet;
-			}
-			else{
-				game_state=play;
-			}
-			break;
-		}
+            char bool_valid_bet = 0;
+            disp_player_hand(player_hand, HAND_LENGTH);
+            disp_cpu_hand(cpu_hand, HAND_LENGTH);
+            disp_enter_bet();
+            while (!bool_valid_bet)
+            {
+                //sets the player bet
+                player_bet = get_keypad_input();
+                //replace this with the bit1 stuff
+                if (player_bet == 1 || player_bet == 2 || player_bet == 4
+                        || player_bet == 8)
+                {
+                    //printf("%d",player_bet);
+                    bool_valid_bet = 1;
+                    game_state++;
+                }
+                else
+                {
+                    disp_invalid_input();
+                }
+            }
+            char cpu_card_val = 0;
+            int i;
+            for (i = 0; i < HAND_LENGTH; i++)
+            {
+                if (cpu_hand[i] != CARD_NULL)
+                {
+                    cpu_card_val += get_val(cpu_hand[i]);
+                }
+            }
+            //set up the cpu_bet
+            if (cpu_card_val < 3)
+            {
+                cpu_bet = 1;
+            }
+            else if (cpu_card_val < 9)
+            {
+                cpu_bet = 2;
+            }
+            else if (cpu_card_val < 16)
+            {
+                cpu_bet = 4;
+            }
+            else
+            {
+                cpu_bet = 8;
+            }
+            disp_bets(player_bet, cpu_bet);
+            if (player_bet != cpu_bet)
+            {
+                game_state = match_bet;
+            }
+            else
+            {
+                game_state = play;
+            }
+            break;
+        }
 		case match_bet:{
 			char match_chosen=0;
 			if(player_bet<cpu_bet){

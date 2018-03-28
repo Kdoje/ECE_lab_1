@@ -13,6 +13,7 @@ void disp_invalid_input();
 void clear_keypad_buffer(); //this sets the buffer to 0
 void store_keypad_input(char input);//input is the char form eg '1' not 1
 int get_keypad_input(); //this returns the string as an int
+void print_keypad_string_input();
 unsigned char *get_keypad_string_input();
 void disp_enter_bet();
 void display_hand(char hand_length, char* p_hand);
