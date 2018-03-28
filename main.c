@@ -34,7 +34,7 @@ int main(void) {
     Graphics_clearDisplay(&g_sContext); // Clear the display
 
     // Write some text to the display
-    Graphics_drawStringCentered(&g_sContext, "Sup fucker", AUTO_STRING_LENGTH,
+    Graphics_drawStringCentered(&g_sContext, "Sup Kent", AUTO_STRING_LENGTH,
                                 48, 15, TRANSPARENT_TEXT);
     Graphics_drawStringCentered(&g_sContext, "to", AUTO_STRING_LENGTH, 48, 25,
                                 TRANSPARENT_TEXT);
