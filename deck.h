@@ -17,6 +17,8 @@ enum state{
 	enter_bet,
 	match_bet,
 	play,
+	cpu_hit,
+	find_winner,
 };
 typedef enum face face;
 enum face{
@@ -25,12 +27,12 @@ enum face{
 	spade,
 	diamond
 };
-static const short HAND_LENGTH;
-static const short CARD_NULL;
-static const short DECK_LENGTH;
+static const short HAND_LENGTH=9;
+static const short CARD_NULL=99;
+static const short DECK_LENGTH=52;
 char deck[52];
-char player_hand[9];
-char cpu_hand[9];
+char player_hand[HAND_LENGTH];
+char cpu_hand[HAND_LENGTH];
 void shuffle_deck(int cut);
 face get_face(int card);
 int get_val(int card);

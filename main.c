@@ -22,8 +22,8 @@ int main(void) {
 	unsigned char cur_key=0;
 	int player_winnings=0;
 	int cpu_winnings=0;
-	extern char player_hand[9];
-	extern char cpu_hand[9];
+	extern char player_hand[HAND_LENGTH];
+	extern char cpu_hand[HAND_LENGTH];
 	unsigned int next_card=0;
     WDTCTL = WDTPW | WDTHOLD;
 
@@ -128,18 +128,24 @@ int main(void) {
             while (!bool_valid_bet)
             {
                 //sets the player bet
-                player_bet = get_keypad_input();
-                //replace this with the bit1 stuff
-                if (player_bet == 1 || player_bet == 2 || player_bet == 4
-                        || player_bet == 8)
+
+                cur_key = getKey();
+                //converts to int;
+                if ((cur_key >= '0') && (cur_key <= '9'))
                 {
-                    //printf("%d",player_bet);
-                    bool_valid_bet = 1;
-                    game_state++;
-                }
-                else
-                {
-                    disp_invalid_input();
+                    player_bet = cur_key - 0x30;
+                    //replace this with the bit1 stuff
+                    if (player_bet == 1 || player_bet == 2 || player_bet == 4
+                            || player_bet == 8)
+                    {
+                        //printf("%d",player_bet);
+                        clear_invalid_input();
+                        bool_valid_bet = 1;
+                    }
+                    else
+                    {
+                        disp_invalid_input();
+                    }
                 }
             }
             char cpu_card_val = 0;
@@ -185,19 +191,22 @@ int main(void) {
 				disp_req_match();
 				while (!match_chosen) {
 					//sets the player bet
-					unsigned char match = get_keypad_input();
-					//replace this with the bit1 stuff
-					if (match==1) {
+					unsigned char cur_key;
+                    //replace this with the bit1 stuff
+                    cur_key = getKey();
+                    //converts to int;
+                    if ((cur_key == '#'))
+                    {
 						//printf("match confirmed\n");
 						match_chosen = 1;
 						game_state++;
 					}
-					else if(match==0){
+					else if(cur_key=='*'){
 						//printf("match declined\n");
 						match_chosen=1;
 						cpu_winnings+=player_bet;
 						player_winnings-=player_bet;
-						disp_totals(player_winnings, cpu_winnings);
+	                    disp_results(1); //1 because cpu won
 						game_state=deal;
 					}
 				}
@@ -216,7 +225,7 @@ int main(void) {
 					player_winnings+=cpu_bet;
 					//the cpu declines
 					disp_cpu_matched((char)0);
-					disp_totals(player_winnings, cpu_winnings);
+					disp_results(0);
 				}
 				else{
 					//the cpu accepts
@@ -226,10 +235,37 @@ int main(void) {
 			}
 			break;
 		}
-		case play:{
-			//print hit or nah
-
-			break;
+        case play:
+        {
+            disp_hit_req();
+            bool still_hitting = true;
+            while (still_hitting)
+            {
+                //sets the player bet
+                unsigned char cur_key;
+                //replace this with the bit1 stuff
+                cur_key = getKey();
+                //converts to int;
+                if ((cur_key == '#'))
+                {
+                    //test add
+                    player_hand[2]=32;
+                    disp_player_hand(player_hand, HAND_LENGTH);
+                    //printf("match confirmed\n");
+                }
+                else if (cur_key == '*')
+                {
+                    //printf("match declined\n");
+                    still_hitting = false;
+                    game_state = cpu_hit;
+                }
+            }
+            break;
+        }
+		case cpu_hit:{
+		    cpu_hand[2]=50;
+		    disp_cpu_hand(cpu_hand, HAND_LENGTH);
+		    break;
 		}
 		}
 	}

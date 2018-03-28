@@ -6,9 +6,9 @@
  */
 
 #include "deck.h"
-extern const short HAND_LENGTH=9;
-extern const short CARD_NULL=99;
-extern const short DECK_LENGTH=52;
+extern const short HAND_LENGTH;
+extern const short CARD_NULL;
+extern const short DECK_LENGTH;
 void shuffle_deck(int cut) {
 	const int DECK_LENGTH = 52;
 	extern char deck[52];
@@ -41,5 +41,15 @@ face get_face(int card){
 }
 
 int get_val(int card){
-	return card%13;
+    if (card % 13 <= 8)
+    {
+        return (card % 13 + 2);
+    }
+    else if (card % 13 <= 11)
+    {
+        return 10;
+    }
+    else{
+        return 11;
+    }
 }
