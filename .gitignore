@@ -2,7 +2,9 @@
 \#*#
 *.o
 *.obj
+*.out
 
+Debug/*
 
 
 
